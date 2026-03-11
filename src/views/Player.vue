@@ -132,7 +132,7 @@ const handleTogglePlay = () =>{
 
 // 歌曲播放结束
 const handleAudioEnded = ()=>{
-  isPlaying = false
+  isPlaying.value = false
 }
 
 // 歌曲播放事件更新

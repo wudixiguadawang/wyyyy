@@ -1,11 +1,28 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
-import {ref} from "vue";
+import { RouterLink, RouterView, useRouter } from "vue-router";
+import { ref } from "vue";
+import { useUserStore } from "@/stores/user"; 
 
+const router = useRouter()
+const userStore = useUserStore()
+const handleAvatarClick = () =>{
+
+}
+
+const handleLogout = ()=>{
+  userStore.clearUser()
+  
+}
+
+// 搜索内容
 const searchKeyword = ref('');
 const handleSearch = () =>{
   const keyword = searchKeyword.value.trim()
-  console.log(keyword);
+  if(!keyword) return
+  router.push({
+    name:"search",
+    query:{ keyword }
+  })
 }
 
 </script>
@@ -31,7 +48,18 @@ const handleSearch = () =>{
               @keyup.enter="handleSearch"
               />
           </div>
-          <RouterLink to="/login" class="login-btn">登录</RouterLink>
+          <RouterLink v-if="!userStore.isLoggedIn"  to="/login" class="login-btn">登录</RouterLink>
+          <div v-else class="user-menu">
+            <button class="user-avatar" type="button" @click="handleAvatarClick">
+              <img :src="userStore.user?.avatar" alt="">
+            </button>
+            <div class="user-dropdown">
+              <div class="user-dropdown-header">
+                <span class="user-name">{{ userStore.user?.nickname || '我的账号' }}</span>
+              </div>
+              <button class="user-dropdown-item" type="button" @click="handleLogout">退出登录</button>
+            </div>
+          </div>
         </div>
       </div>
     </header>
