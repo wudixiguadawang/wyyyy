@@ -1,0 +1,11 @@
+
+{ 
+  "//": "以下配置将所有路由重写至 index.html，以支持前端路由",
+  
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

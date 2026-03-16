@@ -237,6 +237,8 @@ onMounted(() => {
             <p class="song-album">{{ songAlbum }}</p>
           </div>
         </div>
+
+
         <!-- 右侧：歌词 -->
         <div class="player-right">
           <div class="lyrics-card">
@@ -255,8 +257,6 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <!-- 中偏下部：评论区 -->
-      <div></div>
 
 
       <!-- 底部：控制区 -->
