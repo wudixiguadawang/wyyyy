@@ -57,6 +57,7 @@ const fetchPlaylists = async () => {
 const fetchNewSongs = async () => {
   try {
     const res = await api.get("/personalized/newsong")
+    console.log("newsong",res.result[0]);
     newSongs.value = (res.result || []).map((item) => {
       return {
         id: item.id,
@@ -83,6 +84,13 @@ const fetchSingerRank = async () => {
     console.log("获取歌手榜单失败", error);
   }
 }
+
+
+const goPlayer = function(id){
+  router.push({path:"/Player",query:{ id }})
+}
+
+
 
 onMounted(() => {
   fetchPlaylists()
@@ -126,7 +134,7 @@ const handlePlaylistClick = (id) =>{
       </ul>
       <h2 class="section-title section-title--sub">推荐新音乐</h2>
       <ul class="song-list">
-        <li class="song-item" v-for="song in newSongs" :key="song.id">
+        <li class="song-item" v-for="song in newSongs" :key="song.id" @click="goPlayer(song.id)">
           <div class="song-cover">
             <img :src="song.cover" :alt="song.name">
           </div>

@@ -5,6 +5,8 @@ import api from '@/api'
 
 const route = useRoute()
 
+
+// 歌曲ID
 const songId = computed(() => route.query.id)
 
 // 获取audio标签
@@ -186,6 +188,28 @@ const handleProgressClick = (event)=>{
   currentTime.value = newTime
 }
 
+// 评论区功能
+
+import CommentDrawer from '@/components/CommentDrawer.vue'
+
+let isCommentVisible = ref(false)
+
+const showComment = ()=>{
+  isCommentVisible.value = !isCommentVisible.value
+}
+
+import { watch } from 'vue'
+
+
+// 禁止页面滚动
+watch(isCommentVisible, (val) => {
+  if (val) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = ''
+  }
+})
+
 
 
 
@@ -230,12 +254,16 @@ onMounted(() => {
             </div>
           </div>
         </div>
-        
       </div>
+      <!-- 中偏下部：评论区 -->
+      <div></div>
+
+
       <!-- 底部：控制区 -->
         <div class="player-controls">
           <div class="controls-main">
             <button class="btn-circle btn-large" @click="handleTogglePlay">{{ isPlaying ? '⏸' : '▶' }}</button>
+            <button class="btn-circle btn-large" @click="showComment">评论</button>
           </div>
           <div class="progress-wrap">
             <span class="time-label">{{ formatTime(currentTime) }}</span>
@@ -257,7 +285,11 @@ onMounted(() => {
         </div>
     </div>
   </div>
-
+  <!-- <CommentDrawer v-if="isCommentVisible" @showComment="showComment"></CommentDrawer> -->
+   <Transition name="slide">
+    <CommentDrawer v-if="isCommentVisible" v-model:visible ="isCommentVisible" :songId="songId">
+    </CommentDrawer>
+   </Transition>
 </template>
 
 <style scoped>
@@ -413,6 +445,7 @@ onMounted(() => {
 .controls-main {
   display: flex;
   align-items: center;
+  /* justify-content: space-between; */
   gap: 24px;
 }
 
@@ -485,6 +518,35 @@ onMounted(() => {
 .btn-text:hover {
   color: #fff;
 }
+
+/* ================= 抽屉动画 ================= */
+
+/* 1. 定义进场和离场的过程：持续时间、动画曲线 */
+.slide-enter-active,
+.slide-leave-active {
+  /* transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 这是一个高级的丝滑缓动曲线 */
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* 2. 定义进场前的初始状态，和离场后的最终状态 */
+/* 我们让它一开始完全透明，并且向右偏移 30px */
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
+  /* transform: translateX(450px); */
+}
+
+/* 2. 抽屉面板本身（穿透到子组件）：单独控制侧滑位移！ */
+.slide-enter-active :deep(.drawer-panel),
+.slide-leave-active :deep(.drawer-panel) {
+  transition: transform 0.3s ease;
+}
+.slide-enter-from :deep(.drawer-panel),
+.slide-leave-to :deep(.drawer-panel) {
+  transform: translateX(100%);
+}
+
+/* （其实还有 slide-enter-to 和 slide-leave-from，但默认就是原本的正常位置和透明度 1，不用写） */
 
 @media (max-width: 960px) {
   .player-inner {
