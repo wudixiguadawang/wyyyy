@@ -1,7 +1,7 @@
 import axios from "axios";
 
 //配置后端地址
-const BASE_URL = "http://localhost:3000"
+const BASE_URL = "https://api-enhanced-bay.vercel.app"
 
 // 创建实例对象
 
@@ -10,6 +10,7 @@ const instance = axios.create({
     timeout:10000,
     withCredentials:true,
 })
+
 
 // 请求拦截:可以统一添加 token
 
