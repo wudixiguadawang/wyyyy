@@ -4,11 +4,12 @@
 
         <div class="drawer-panel">
             <div class="panel-header">
-                <h3>热门评论</h3>
+                <!-- <h3>热门评论</h3> -->
+                 <h3>评论</h3>
                 <span class="close-icon" @click="$emit('update:visible', false)">✕</span>
             </div>
 
-            <ul class="comment-list">
+            <ul class="comment-list" ref = "scrollContainer" @scroll=" handleScroll ">
                 <li v-for="item in comments" :key="item.commentId" class="comment-item">
                     <div class="avatar-box">
                         <img :src="item.user?.avatarUrl + '?param=50y50'" alt="avatar" class="avatar-img">
@@ -24,6 +25,7 @@
                     </div>
                 </li>
             </ul>
+
         </div>
     </div>
 </template>
@@ -38,23 +40,55 @@ const emit = defineEmits(['update:visible'])
 let props = defineProps({ 'songId': String })
 
 const comments = ref([])
+const offset = ref(0) // 偏移量，网易云 API 通常用 offset 控制分页
 
-const getComment = async (id = "", limit = 10) => {
-    if (!id) return
+// 每页加载多少条
+const limit = 20 
+const loading = ref(false) // 加载锁：防止重复请求
+const hasMore = ref(true)  // 是否还有更多评论
+const scrollContainer = ref(null) //绑定ul元素属性
+
+
+const getComment = async () => {
+    if (!props.songId) return
+    if( loading.value || !hasMore.value) {
+        return
+    }
     try {
-        let res = await api.get("/comment/music", { id, limit })
-
+        // 发送请求前上锁
+        loading.value = true
+        let res = await api.get("/comment/music", { id:props.songId, offset:offset.value ,limit })
         console.log(res);
-        comments.value = res.hotComments || res.comments || []
+        const newComments = res.hotComments || res.comments || []
+        comments.value.push(...newComments)
+
+        offset.value = comments.value.length
+        hasMore.value = res.more
 
         console.log("comments", comments);
     } catch (error) {
         console.log("获取评论失败", error);
+    } finally{
+        loading.value = false
     }
 }
+// 滚动评论区事件
+
+const handleScroll = ()=>{
+    const el =  scrollContainer.value
+    if (!el) {
+        return
+    }
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 50) {
+        getComment()
+    }
+}
+
+
+
 // defineProps({ showComment: Function })
 onMounted(() => {
-    getComment(props.songId)
+    getComment()
 })
 
 </script>

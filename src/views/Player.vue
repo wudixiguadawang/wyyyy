@@ -190,6 +190,7 @@ const handleProgressClick = (event)=>{
 
 // 评论区功能
 
+// 3/16 完善评论区滚动加载
 import CommentDrawer from '@/components/CommentDrawer.vue'
 
 let isCommentVisible = ref(false)
@@ -197,6 +198,9 @@ let isCommentVisible = ref(false)
 const showComment = ()=>{
   isCommentVisible.value = !isCommentVisible.value
 }
+
+
+
 
 import { watch } from 'vue'
 

@@ -5,6 +5,11 @@ import { useUserStore } from "@/stores/user";
 
 const router = useRouter()
 const userStore = useUserStore()
+
+console.log("useUserStore",useUserStore);
+console.log("useUserStore()",useUserStore());
+console.log("userStore",userStore);
+
 const handleAvatarClick = () =>{
 
 }
